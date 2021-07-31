@@ -96,7 +96,7 @@ const handleLeftClick = e => {
 
 const handleRightClick = e => {
     if (!flagsNr) {
-        return;
+        //return;
     }
     let btn = e.target;
     if (btn.innerText) {
