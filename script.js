@@ -1,12 +1,10 @@
-import { n, m, bombsNr, FLAG, BOMBID, HIDDENID, BOMB } from "./constants.js";
+import {BOMBSNR, ROWSNR, COLSNR, FLAG, BOMB, BOMBID, HIDDENID } from "./constants.js";
 const boardDiv = document.querySelector('#board');
 const flagsElem = document.querySelector('#flags');
 const message = document.querySelector('#message');
-let flagsNr = bombsNr;
-let gameBoard = new Array(n).fill().map(() => new Array(m).fill(HIDDENID));
-let vis = new Array(n).fill().map(() => new Array(m).fill(false));
+let flagsNr = BOMBSNR;
+let gameBoard = new Array(ROWSNR).fill().map(() => new Array(COLSNR).fill(HIDDENID));
 const updateFlagsDiv = () => flagsElem.innerText = `${FLAG}:${flagsNr}`;
-updateFlagsDiv();
 
 const getLineAndCol = btn => {
     const { id } = btn;
@@ -27,8 +25,8 @@ const getLineAndCol = btn => {
 }
 
 const updateUserBoard = () => {
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < m; j++) {
+    for (let i = 0; i < ROWSNR; i++) {
+        for (let j = 0; j < COLSNR; j++) {
             let btn = document.querySelector(`#line${i}-col${j}`);
             if (gameBoard[i][j] === HIDDENID || gameBoard[i][j] == BOMBID) {
                 continue;
@@ -42,8 +40,8 @@ const updateUserBoard = () => {
 }
 
 const checkWin = () => {
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < m; j++) {
+    for (let i = 0; i < ROWSNR; i++) {
+        for (let j = 0; j < COLSNR; j++) {
             if (gameBoard[i][j] === HIDDENID) {
                 return false;
             }
@@ -53,8 +51,8 @@ const checkWin = () => {
 }
 
 const finishGame = (isWin) => {
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < m; j++) {
+    for (let i = 0; i < ROWSNR; i++) {
+        for (let j = 0; j < COLSNR; j++) {
             let btn = document.querySelector(`#line${i}-col${j}`);
             btn.disabled = true;
             if (gameBoard[i][j] == BOMBID) {
@@ -82,7 +80,7 @@ const handleLeftClick = e => {
         for (let dirJ = -1; dirJ <= 1; dirJ++) {
             let newI = line + dirI;
             let newJ = col + dirJ;
-            if (!(newI >= 0 && newJ >= 0 && newI < n && newJ < m)) {
+            if (!(newI >= 0 && newJ >= 0 && newI < ROWSNR && newJ < COLSNR)) {
                 continue;
             }
             if (gameBoard[newI][newJ] === BOMBID) {
@@ -98,7 +96,7 @@ const handleLeftClick = e => {
 
 const handleRightClick = e => {
     if (!flagsNr) {
-        //return;
+        return;
     }
     let btn = e.target;
     if (btn.innerText) {
@@ -112,9 +110,9 @@ const handleRightClick = e => {
 }
 
 //#region draw boad
-for (let i = 0; i < n; i++) {
+for (let i = 0; i < ROWSNR; i++) {
     let tr = document.createElement('tr');
-    for (let j = 0; j < m; j++) {
+    for (let j = 0; j < COLSNR; j++) {
         let btn = document.createElement('button');
         btn.id = `line${i}-col${j}`;
         btn.onmousedown = e => !e.button ? handleLeftClick(e) : handleRightClick(e);
@@ -129,11 +127,11 @@ window.oncontextmenu = () => {
     return false;
 }
 //#region init board
-let remBombs = bombsNr;
+let remBombs = BOMBSNR;
 const fillBoard = () => {
     const toBeBombChance = 15 / 100;//distribution of bombs
-    for (let i = 0; i < n && remBombs; i++) {
-        for (let j = 0; j < m && remBombs; j++) {
+    for (let i = 0; i < ROWSNR && remBombs; i++) {
+        for (let j = 0; j < COLSNR && remBombs; j++) {
             if (gameBoard[i][j] === BOMBID) {
                 continue;
             }
@@ -149,6 +147,7 @@ const fillBoard = () => {
 while (remBombs) {
     fillBoard();
 }
+updateFlagsDiv();
 console.assert(!remBombs);
 //*/
 //#endregion
